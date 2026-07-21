@@ -8,12 +8,12 @@ app = Flask(__name__)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Checks for model.pkl or linear_model.pkl in the root directory
-MODEL_PATH = os.path.join(BASE_DIR, 'model.pkl')
+# Checks for linear_model.pkl or model.pkl in the root directory
+MODEL_PATH = os.path.join(BASE_DIR, 'linear_model.pkl')
 if not os.path.exists(MODEL_PATH):
-    MODEL_PATH = os.path.join(BASE_DIR, 'linear_model.pkl')
+    MODEL_PATH = os.path.join(BASE_DIR, 'model.pkl')
 
-# Feature names extracted directly from your trained model
+# Feature names extracted directly from linear_model.pkl
 FEATURE_COLUMNS = [
     'number of bedrooms',
     'number of bathrooms',
@@ -37,7 +37,7 @@ model = None
 model_status = "Offline"
 status_message = ""
 
-# Load model using the standard pickle library
+# Load the model using python's built-in pickle module
 if os.path.exists(MODEL_PATH):
     try:
         with open(MODEL_PATH, 'rb') as f:
@@ -49,7 +49,7 @@ if os.path.exists(MODEL_PATH):
         status_message = f"Failed to load model: {str(e)}"
 else:
     model_status = "Missing"
-    status_message = "model.pkl not found in root directory."
+    status_message = "linear_model.pkl not found in root directory."
 
 HTML_LAYOUT = """
 <!DOCTYPE html>
@@ -90,7 +90,7 @@ HTML_LAYOUT = """
             overflow-x: hidden;
         }
 
-        /* Animated Ambient Glowing Orbs */
+        /* Animated Glowing Background Lights */
         .glow-orb {
             position: absolute;
             border-radius: 50%;
@@ -246,7 +246,6 @@ HTML_LAYOUT = """
             box-shadow: 0 8px 25px rgba(236, 72, 153, 0.6);
         }
 
-        /* Result Outcome Display */
         .result-card {
             margin-top: 2rem;
             padding: 1.8rem;
@@ -431,9 +430,9 @@ def format_inr(amount_inr):
         return f"{amount_inr:,.2f}"
 
 def execute_prediction(data_source):
-    """Parses input fields, passes them into the linear regression model, and converts USD to INR."""
+    """Parses inputs, runs prediction, and converts USD to INR."""
     if model is None:
-        raise ValueError("Model is not loaded. Please upload model.pkl.")
+        raise ValueError("Model is not loaded. Ensure linear_model.pkl exists in the root folder.")
     
     input_dict = {}
     for col in FEATURE_COLUMNS:
@@ -445,7 +444,7 @@ def execute_prediction(data_source):
     prediction = model.predict(df_input)
     usd_val = max(0.0, float(prediction[0]))
     
-    # Current exchange rate (~96.16 INR per 1 USD)
+    # Currency conversion (~96.16 INR per 1 USD)
     inr_val = usd_val * 96.16
     return usd_val, format_inr(inr_val)
 
