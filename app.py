@@ -35,7 +35,6 @@ FEATURE_COLUMNS = [
 
 model = None
 model_status = "Offline"
-status_message = ""
 
 # Load the model using python's built-in pickle module
 if os.path.exists(MODEL_PATH):
@@ -43,13 +42,10 @@ if os.path.exists(MODEL_PATH):
         with open(MODEL_PATH, 'rb') as f:
             model = pickle.load(f)
         model_status = "Online"
-        status_message = f"Model ({os.path.basename(MODEL_PATH)}) loaded successfully."
     except Exception as e:
         model_status = "Error"
-        status_message = f"Failed to load model: {str(e)}"
 else:
     model_status = "Missing"
-    status_message = "linear_model.pkl not found in root directory."
 
 HTML_LAYOUT = """
 <!DOCTYPE html>
@@ -179,17 +175,6 @@ HTML_LAYOUT = """
             margin-top: 0.4rem;
         }
 
-        .info-banner {
-            margin-bottom: 1.5rem;
-            padding: 0.85rem 1rem;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            text-align: center;
-            background: rgba(236, 72, 153, 0.08);
-            border: 1px solid rgba(236, 72, 153, 0.2);
-            color: #f472b6;
-        }
-
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -308,10 +293,6 @@ HTML_LAYOUT = """
             <h1>✨ Cute Dream House Estimator ✨</h1>
             <p>Smart Property Valuation Engine (USD & Indian Rupees)</p>
         </header>
-
-        <div class="info-banner">
-            {{ status_message }}
-        </div>
 
         <form method="POST" action="/" class="form-grid">
             <div class="input-group">
@@ -465,7 +446,6 @@ def home():
     return render_template_string(
         HTML_LAYOUT, 
         model_status=model_status, 
-        status_message=status_message,
         usd_price=usd_price,
         inr_formatted=inr_formatted,
         error_msg=error_msg,
