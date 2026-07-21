@@ -290,7 +290,7 @@ HTML_LAYOUT = """
             <div class="status-badge {% if model_status == 'Online' %}status-online{% else %}status-offline{% endif %}">
                 ● AI Engine {{ model_status }}
             </div>
-            <h1>✨ Cute Dream House Estimator ✨</h1>
+            <h1>✨Dream House Estimator ✨</h1>
             <p>Smart Property Valuation Engine (USD & Indian Rupees)</p>
         </header>
 
