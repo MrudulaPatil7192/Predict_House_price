@@ -9,7 +9,7 @@ app = Flask(__name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, 'linear_model.pkl')
 
-# Feature names matching linear_model.pkl exactly
+# Feature names extracted directly from linear_model.pkl
 FEATURE_COLUMNS = [
     'number of bedrooms',
     'number of bathrooms',
@@ -33,7 +33,7 @@ model = None
 model_status = "Offline"
 status_message = ""
 
-# Load linear regression model
+# Load the pickled model
 if os.path.exists(MODEL_PATH):
     try:
         with open(MODEL_PATH, 'rb') as f:
@@ -53,7 +53,7 @@ HTML_LAYOUT = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>✨ Cute Dream House Predictor AI ✨</title>
+    <title>✨ Cute Dream House Estimator AI ✨</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -86,7 +86,7 @@ HTML_LAYOUT = """
             overflow-x: hidden;
         }
 
-        /* Animated Glowing Orbs */
+        /* Animated Glowing Orbs Background */
         .glow-orb {
             position: absolute;
             border-radius: 50%;
@@ -242,7 +242,7 @@ HTML_LAYOUT = """
             box-shadow: 0 8px 25px rgba(236, 72, 153, 0.6);
         }
 
-        /* Result Panel */
+        /* Result Outcome Display */
         .result-card {
             margin-top: 2rem;
             padding: 1.8rem;
@@ -303,7 +303,7 @@ HTML_LAYOUT = """
                 ● AI Engine {{ model_status }}
             </div>
             <h1>✨ Cute Dream House Estimator ✨</h1>
-            <p>Smart AI Property Valuation Engine (USD & Indian Rupees)</p>
+            <p>Smart Property Valuation Engine (USD & Indian Rupees)</p>
         </header>
 
         <div class="info-banner">
@@ -427,9 +427,9 @@ def format_inr(amount_inr):
         return f"{amount_inr:,.2f}"
 
 def execute_prediction(data_source):
-    """Extracts inputs, runs linear model prediction, and converts to INR."""
+    """Parses input fields, passes them into the linear regression model, and converts USD to INR."""
     if model is None:
-        raise ValueError("Model is not loaded. Please upload linear_model.pkl.")
+        raise ValueError("Model is not loaded. Please ensure linear_model.pkl exists.")
     
     input_dict = {}
     for col in FEATURE_COLUMNS:
@@ -441,8 +441,8 @@ def execute_prediction(data_source):
     prediction = model.predict(df_input)
     usd_val = max(0.0, float(prediction[0]))
     
-    # Approx exchange rate: 1 USD ~ 83.5 INR
-    inr_val = usd_val * 83.5
+    # Current exchange rate (~96.16 INR per 1 USD)
+    inr_val = usd_val * 96.16
     return usd_val, format_inr(inr_val)
 
 @app.route('/', methods=['GET', 'POST'])
