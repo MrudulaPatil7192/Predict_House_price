@@ -7,9 +7,13 @@ from flask import Flask, render_template_string, request, jsonify
 app = Flask(__name__)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, 'linear_model.pkl')
 
-# Feature names extracted directly from linear_model.pkl
+# Checks for model.pkl or linear_model.pkl in the root directory
+MODEL_PATH = os.path.join(BASE_DIR, 'model.pkl')
+if not os.path.exists(MODEL_PATH):
+    MODEL_PATH = os.path.join(BASE_DIR, 'linear_model.pkl')
+
+# Feature names extracted directly from your trained model
 FEATURE_COLUMNS = [
     'number of bedrooms',
     'number of bathrooms',
@@ -33,19 +37,19 @@ model = None
 model_status = "Offline"
 status_message = ""
 
-# Load the pickled model
+# Load model using the standard pickle library
 if os.path.exists(MODEL_PATH):
     try:
         with open(MODEL_PATH, 'rb') as f:
             model = pickle.load(f)
         model_status = "Online"
-        status_message = "linear_model.pkl loaded successfully."
+        status_message = f"Model ({os.path.basename(MODEL_PATH)}) loaded successfully."
     except Exception as e:
         model_status = "Error"
         status_message = f"Failed to load model: {str(e)}"
 else:
     model_status = "Missing"
-    status_message = "linear_model.pkl not found in root directory."
+    status_message = "model.pkl not found in root directory."
 
 HTML_LAYOUT = """
 <!DOCTYPE html>
@@ -86,7 +90,7 @@ HTML_LAYOUT = """
             overflow-x: hidden;
         }
 
-        /* Animated Glowing Orbs Background */
+        /* Animated Ambient Glowing Orbs */
         .glow-orb {
             position: absolute;
             border-radius: 50%;
@@ -429,7 +433,7 @@ def format_inr(amount_inr):
 def execute_prediction(data_source):
     """Parses input fields, passes them into the linear regression model, and converts USD to INR."""
     if model is None:
-        raise ValueError("Model is not loaded. Please ensure linear_model.pkl exists.")
+        raise ValueError("Model is not loaded. Please upload model.pkl.")
     
     input_dict = {}
     for col in FEATURE_COLUMNS:
