@@ -9,7 +9,7 @@ app = Flask(__name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, 'linear_model.pkl')
 
-# Exact feature names extracted from your pickled model
+# Feature names matching linear_model.pkl exactly
 FEATURE_COLUMNS = [
     'number of bedrooms',
     'number of bathrooms',
@@ -33,7 +33,7 @@ model = None
 model_status = "Offline"
 status_message = ""
 
-# Load the linear regression model using pickle
+# Load linear regression model
 if os.path.exists(MODEL_PATH):
     try:
         with open(MODEL_PATH, 'rb') as f:
@@ -42,7 +42,7 @@ if os.path.exists(MODEL_PATH):
         status_message = "linear_model.pkl loaded successfully."
     except Exception as e:
         model_status = "Error"
-        status_message = f"Failed to load linear_model.pkl: {str(e)}"
+        status_message = f"Failed to load model: {str(e)}"
 else:
     model_status = "Missing"
     status_message = "linear_model.pkl not found in root directory."
@@ -53,18 +53,18 @@ HTML_LAYOUT = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>House Price Predictor</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>✨ Cute Dream House Predictor AI ✨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #030712;
-            --card-bg: rgba(17, 24, 39, 0.85);
-            --border: rgba(255, 255, 255, 0.12);
-            --accent: #6366f1;
-            --accent-hover: #4f46e5;
-            --accent-glow: rgba(99, 102, 241, 0.4);
-            --text-main: #f9fafb;
-            --text-sub: #9ca3af;
+            --bg: #0b0f19;
+            --card-bg: rgba(23, 31, 51, 0.78);
+            --border: rgba(236, 72, 153, 0.25);
+            --accent-pink: #ec4899;
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #38bdf8;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
         }
 
         * {
@@ -86,33 +86,33 @@ HTML_LAYOUT = """
             overflow-x: hidden;
         }
 
-        /* Background Animated Glows */
+        /* Animated Glowing Orbs */
         .glow-orb {
             position: absolute;
             border-radius: 50%;
-            filter: blur(110px);
+            filter: blur(120px);
             z-index: 0;
-            animation: pulseGlow 8s ease-in-out infinite alternate;
+            animation: pulseGlow 9s ease-in-out infinite alternate;
         }
         .orb-1 {
-            width: 450px;
-            height: 450px;
-            background: rgba(99, 102, 241, 0.22);
-            top: -100px;
-            left: -100px;
+            width: 480px;
+            height: 480px;
+            background: rgba(236, 72, 153, 0.22);
+            top: -10%;
+            left: -10%;
         }
         .orb-2 {
-            width: 400px;
-            height: 400px;
-            background: rgba(168, 85, 247, 0.18);
-            bottom: -100px;
-            right: -100px;
-            animation-delay: -4s;
+            width: 450px;
+            height: 450px;
+            background: rgba(139, 92, 246, 0.2);
+            bottom: -10%;
+            right: -10%;
+            animation-delay: -4.5s;
         }
 
         @keyframes pulseGlow {
             0% { transform: scale(1) translate(0, 0); }
-            100% { transform: scale(1.15) translate(30px, 20px); }
+            100% { transform: scale(1.18) translate(35px, 25px); }
         }
 
         .container {
@@ -144,7 +144,7 @@ HTML_LAYOUT = """
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.35rem 0.9rem;
+            padding: 0.35rem 0.95rem;
             border-radius: 9999px;
             font-size: 0.8rem;
             font-weight: 600;
@@ -164,7 +164,7 @@ HTML_LAYOUT = """
         header h1 {
             font-size: 2.3rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #ffffff 0%, #c7d2fe 100%);
+            background: linear-gradient(135deg, #f472b6, #c084fc, #38bdf8);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -181,9 +181,9 @@ HTML_LAYOUT = """
             border-radius: 12px;
             font-size: 0.85rem;
             text-align: center;
-            background: rgba(99, 102, 241, 0.08);
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            color: #c7d2fe;
+            background: rgba(236, 72, 153, 0.08);
+            border: 1px solid rgba(236, 72, 153, 0.2);
+            color: #f472b6;
         }
 
         .form-grid {
@@ -208,7 +208,7 @@ HTML_LAYOUT = """
 
         .input-group input, .input-group select {
             background: rgba(15, 23, 42, 0.7);
-            border: 1px solid var(--border);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 12px;
             padding: 0.75rem 1rem;
             color: #fff;
@@ -218,14 +218,14 @@ HTML_LAYOUT = """
         }
 
         .input-group input:focus, .input-group select:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px var(--accent-glow);
+            border-color: var(--accent-pink);
+            box-shadow: 0 0 12px rgba(236, 72, 153, 0.4);
         }
 
         .btn-submit {
             grid-column: 1 / -1;
             margin-top: 1rem;
-            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            background: linear-gradient(135deg, var(--accent-pink) 0%, var(--accent-purple) 100%);
             color: #fff;
             border: none;
             padding: 1.1rem;
@@ -234,22 +234,23 @@ HTML_LAYOUT = """
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 20px var(--accent-glow);
+            box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4);
         }
 
         .btn-submit:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px var(--accent-glow);
+            box-shadow: 0 8px 25px rgba(236, 72, 153, 0.6);
         }
 
+        /* Result Panel */
         .result-card {
             margin-top: 2rem;
             padding: 1.8rem;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%);
-            border: 1px solid rgba(129, 140, 248, 0.4);
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.18) 0%, rgba(139, 92, 246, 0.18) 100%);
+            border: 1px solid rgba(236, 72, 153, 0.4);
             border-radius: 20px;
             text-align: center;
-            animation: popIn 0.4s ease-out;
+            animation: popIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .error-card {
@@ -264,23 +265,31 @@ HTML_LAYOUT = """
         }
 
         @keyframes popIn {
-            from { opacity: 0; transform: scale(0.95); }
+            from { opacity: 0; transform: scale(0.92); }
             to { opacity: 1; transform: scale(1); }
         }
 
         .result-card h3 {
             font-size: 0.85rem;
-            color: #c7d2fe;
+            color: #f472b6;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.1em;
         }
 
-        .prediction-value {
-            font-size: 3.2rem;
+        .prediction-value-usd {
+            font-size: 2.8rem;
             font-weight: 800;
             color: #ffffff;
+            margin-top: 0.2rem;
+            text-shadow: 0 0 25px rgba(236, 72, 153, 0.5);
+        }
+
+        .prediction-value-inr {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #38bdf8;
             margin-top: 0.3rem;
-            text-shadow: 0 0 30px var(--accent-glow);
+            text-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
         }
     </style>
 </head>
@@ -291,10 +300,10 @@ HTML_LAYOUT = """
     <div class="container">
         <header>
             <div class="status-badge {% if model_status == 'Online' %}status-online{% else %}status-offline{% endif %}">
-                ● Model {{ model_status }}
+                ● AI Engine {{ model_status }}
             </div>
-            <h1>House Price Prediction</h1>
-            <p>Linear Regression valuation engine based on property metrics</p>
+            <h1>✨ Cute Dream House Estimator ✨</h1>
+            <p>Smart AI Property Valuation Engine (USD & Indian Rupees)</p>
         </header>
 
         <div class="info-banner">
@@ -362,12 +371,12 @@ HTML_LAYOUT = """
 
             <div class="input-group">
                 <label>Built Year</label>
-                <input type="number" name="Built Year" value="{{ inputs['Built Year'] if inputs else '1951' }}" required>
+                <input type="number" name="Built Year" value="{{ inputs['Built Year'] if inputs else '2012' }}" required>
             </div>
 
             <div class="input-group">
                 <label>Renovation Year</label>
-                <input type="number" name="Renovation Year" value="{{ inputs['Renovation Year'] if inputs else '1991' }}" required>
+                <input type="number" name="Renovation Year" value="{{ inputs['Renovation Year'] if inputs else '0' }}" required>
             </div>
 
             <div class="input-group">
@@ -382,11 +391,11 @@ HTML_LAYOUT = """
 
             <div class="input-group">
                 <label>Airport Distance (km)</label>
-                <input type="number" step="any" name="Distance from the airport" value="{{ inputs['Distance from the airport'] if inputs else '50' }}" required>
+                <input type="number" step="any" name="Distance from the airport" value="{{ inputs['Distance from the airport'] if inputs else '25' }}" required>
             </div>
 
             <button type="submit" class="btn-submit">
-                Calculate Predicted Price
+                ✨ Calculate Dream House Price ✨
             </button>
         </form>
 
@@ -396,10 +405,11 @@ HTML_LAYOUT = """
             </div>
         {% endif %}
 
-        {% if prediction_result is not none %}
+        {% if usd_price is not none %}
             <div class="result-card">
-                <h3>Estimated House Valuation</h3>
-                <div class="prediction-value">${{ "{:,.2f}".format(prediction_result) }}</div>
+                <h3>Estimated Dream House Value</h3>
+                <div class="prediction-value-usd">${{ "{:,.2f}".format(usd_price) }} USD</div>
+                <div class="prediction-value-inr">Approx. ₹{{ inr_formatted }} (Indian Valuation)</div>
             </div>
         {% endif %}
     </div>
@@ -407,31 +417,45 @@ HTML_LAYOUT = """
 </html>
 """
 
+def format_inr(amount_inr):
+    """Formats numeric INR into Crores or Lakhs."""
+    if amount_inr >= 10000000:
+        return f"{amount_inr / 10000000:.2f} Crores"
+    elif amount_inr >= 100000:
+        return f"{amount_inr / 100000:.2f} Lakhs"
+    else:
+        return f"{amount_inr:,.2f}"
+
 def execute_prediction(data_source):
-    """Formats inputs into a DataFrame matching feature names and runs linear regression prediction."""
+    """Extracts inputs, runs linear model prediction, and converts to INR."""
     if model is None:
-        raise ValueError("Linear regression model is not loaded. Ensure linear_model.pkl exists.")
+        raise ValueError("Model is not loaded. Please upload linear_model.pkl.")
     
     input_dict = {}
     for col in FEATURE_COLUMNS:
         if col not in data_source:
-            raise KeyError(f"Missing required feature input: '{col}'")
+            raise KeyError(f"Missing required feature: '{col}'")
         input_dict[col] = [float(data_source[col])]
 
     df_input = pd.DataFrame(input_dict)
     prediction = model.predict(df_input)
-    return float(prediction[0])
+    usd_val = max(0.0, float(prediction[0]))
+    
+    # Approx exchange rate: 1 USD ~ 83.5 INR
+    inr_val = usd_val * 83.5
+    return usd_val, format_inr(inr_val)
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    prediction_result = None
+    usd_price = None
+    inr_formatted = None
     error_msg = None
     inputs = None
 
     if request.method == 'POST':
         inputs = request.form
         try:
-            prediction_result = execute_prediction(inputs)
+            usd_price, inr_formatted = execute_prediction(inputs)
         except Exception as e:
             error_msg = f"Prediction Error: {str(e)}"
 
@@ -439,7 +463,8 @@ def home():
         HTML_LAYOUT, 
         model_status=model_status, 
         status_message=status_message,
-        prediction_result=prediction_result,
+        usd_price=usd_price,
+        inr_formatted=inr_formatted,
         error_msg=error_msg,
         inputs=inputs
     )
@@ -448,8 +473,11 @@ def home():
 def predict_api():
     try:
         data = request.get_json()
-        val = execute_prediction(data)
-        return jsonify({'prediction': val})
+        usd_val, inr_fmt = execute_prediction(data)
+        return jsonify({
+            'prediction_usd': usd_val,
+            'prediction_inr_formatted': f"₹{inr_fmt}"
+        })
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
